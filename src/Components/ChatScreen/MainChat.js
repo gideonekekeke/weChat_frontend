@@ -15,13 +15,12 @@ const MainChat = () => {
 
 	const getData = async () => {
 		const res = await axios.get(url);
-		console.log(res.data);
+
 		setFetchData(res.data);
 	};
 
 	React.useEffect(() => {
 		getData();
-		console.log("this is the friend", fetchData);
 	}, []);
 	return (
 		<Container>

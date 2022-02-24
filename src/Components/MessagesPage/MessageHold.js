@@ -6,7 +6,8 @@ import InputEmoji from "react-input-emoji";
 import { GlobalContext } from "../../GlobalState/GlobalContext";
 import { useSelector } from "react-redux";
 import { AiTwotoneDelete } from "react-icons/ai";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import io from "socket.io-client";
 
 const MessageHold = () => {
@@ -24,12 +25,15 @@ const MessageHold = () => {
 	};
 
 	const postMessage = async () => {
-		await axios.post(url, data);
+		await axios.post(url, data).then(() => {
+			setCom("");
+		});
 	};
 
 	const fetchChat = async () => {
-		const res = await axios.get(url);
-		setChatData(res.data);
+		await axios.get(url).then((res) => {
+			setChatData(res.data);
+		});
 	};
 
 	const removeData = async (id) => {
@@ -37,10 +41,24 @@ const MessageHold = () => {
 			window.location.reload();
 		});
 	};
+	const customId = "custom-id-yes";
 
 	const socket = io(url);
 	socket.on("observer", (data) => {
-		console.log(data);
+		// console.log("thia ia rhwebjdn", data.chats);
+		if (data.SendTo === current._id) {
+			toast.success(`you have one new message (${data.chats})`, {
+				position: "top-right",
+				autoClose: 9000,
+				toastId: customId,
+				icon: "🚀",
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
+		}
 		setChatData([...chatData, data]);
 	});
 
@@ -61,13 +79,14 @@ const MessageHold = () => {
 
 	return (
 		<Container>
+			<ToastContainer />
 			<MainHold>
 				<Second>
 					<br />
 					<MessComp>
 						<Main>
 							{chatData?.map((props) => (
-								<div>
+								<div key={props._id}>
 									<div style={{ minWidth: "20px" }}>
 										{props.senderID === current._id &&
 										readChatId === props.SendTo &&

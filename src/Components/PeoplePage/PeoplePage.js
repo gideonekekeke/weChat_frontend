@@ -16,7 +16,7 @@ const PeoplePage = () => {
 
 	const getData = async () => {
 		const res = await axios.get(url);
-		console.log(res.data.data);
+
 		setFetchData(res.data.data);
 	};
 

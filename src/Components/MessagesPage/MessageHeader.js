@@ -21,7 +21,7 @@ const MessageHeader = ({ id }) => {
 
 	React.useEffect(() => {
 		getById();
-		console.log(fetchData);
+
 		getUser();
 	}, [readChatId]);
 
