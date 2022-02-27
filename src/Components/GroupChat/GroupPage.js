@@ -7,26 +7,28 @@ import { GlobalContext } from "../../GlobalState/GlobalContext";
 import { useSelector } from "react-redux";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import io from "socket.io-client";
+// import "react-toastify/dist/ReactToastify.css";
+// import io from "socket.io-client";
 
-const MessageHold = () => {
-	const url = "http://localhost:9090";
-	const [com, setCom] = React.useState("");
+const GroupPage = ({ id }) => {
+	const url = "http://localhost:9090/message";
+	const [message, setMessage] = React.useState("");
 	const { current } = useContext(GlobalContext);
 	const [chatData, setChatData] = React.useState([]);
-	const readChatId = useSelector((state) => state.persistedReducer.userChat);
-	const readMainID = useSelector((state) => state.persistedReducer.MainIDS);
+	const readMessageId = useSelector((state) => state.persistedReducer.groupId);
+	console.log("sdfhnjmsd", id);
+	console.log("from state", readMessageId);
+	// const readMainID = useSelector((state) => state.persistedReducer.MainIDS);
 
-	const data = {
-		chats: com,
-		senderID: current._id,
-		SendTo: readChatId,
+	const dataHold = {
+		message: message,
+		createdBy: current._id,
+		individualID: id,
 	};
 
 	const postMessage = async () => {
-		await axios.post(url, data).then(() => {
-			setCom("");
+		await axios.post(url, dataHold).then(() => {
+			setMessage("");
 		});
 	};
 
@@ -36,45 +38,34 @@ const MessageHold = () => {
 		});
 	};
 
-	const removeData = async (id) => {
-		await axios.delete(`http://localhost:9090/${id}`).then(() => {
-			window.location.reload();
-		});
-	};
-	const customId = "custom-id-yes";
+	// const removeData = async (id) => {
+	// 	await axios.delete(`http://localhost:9090/${id}`).then(() => {
+	// 		window.location.reload();
+	// 	});
+	// };
+	// const customId = "custom-id-yes";
 
-	const socket = io(url);
-	socket.on("observer", (data) => {
-		// console.log("thia ia rhwebjdn", data.chats);
-		if (data.SendTo === current._id) {
-			toast.success(`you have one new message (${data.chats})`, {
-				position: "top-right",
-				autoClose: 6000,
-				toastId: customId,
-				icon: "🚀",
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-			});
-		}
-		setChatData([...chatData, data]);
-	});
-
-	socket.on("observerDelete", (data) => {
-		const res = chatData.filter((el) => el._id !== data);
-		setChatData(res);
-		console.log("na the ere", res);
-	});
-
-	// const testing = chatData.reduce((el) => el.userIds !== current._id);
-
-	// console.log("testing facoes", testing);
+	// const socket = io(url);
+	// socket.on("observer", (data) => {
+	// 	// console.log("thia ia rhwebjdn", data.chats);
+	// 	if (data.SendTo === current._id) {
+	// 		toast.success(`you have one new message (${data.chats})`, {
+	// 			position: "top-right",
+	// 			autoClose: 6000,
+	// 			toastId: customId,
+	// 			icon: "🚀",
+	// 			hideProgressBar: false,
+	// 			closeOnClick: true,
+	// 			pauseOnHover: true,
+	// 			draggable: true,
+	// 			progress: undefined,
+	// 		});
+	// 	}
+	// 	setChatData([...chatData, data]);
+	// });
 
 	React.useEffect(() => {
 		fetchChat();
-		// console.log("here irss chatsffdd", chatData);
 	}, []);
 
 	return (
@@ -85,47 +76,33 @@ const MessageHold = () => {
 					<br />
 					<MessComp>
 						<Main>
-							{chatData?.map((props) => (
-								<div key={props._id}>
-									<div style={{ minWidth: "20px" }}>
-										{props.senderID === current._id &&
-										readChatId === props.SendTo &&
-										props.SendTo ? (
-											<MessageContainer bg='#EFEFEF'>
-												{props.chats}
-											</MessageContainer>
-										) : (
-											<div>
-												{props.SendTo === current._id &&
-												readChatId === props.senderID &&
-												props.senderID ? (
-													<MessageContainer2>{props.chats}</MessageContainer2>
-												) : null}
-											</div>
-										)}
+							<div>
+								<div style={{ minWidth: "20px" }}>
+									{chatData.map((props) => (
+										<div>
+											{props.createdBy === current._id &&
+											props.individualID === id ? (
+												<MessageContainer bg='#EFEFEF'>
+													{props.message}
+												</MessageContainer>
+											) : null}
+										</div>
+									))}
 
-										{props.senderID === current._id &&
-										readChatId === props.SendTo &&
-										props.SendTo ? (
-											<span
-												onClick={() => {
-													removeData(props._id);
-												}}>
-												<AiTwotoneDelete
-													style={{ color: "red", cursor: "pointer" }}
-												/>
-											</span>
-										) : null}
-									</div>
+									<span>
+										<AiTwotoneDelete
+											style={{ color: "red", cursor: "pointer" }}
+										/>
+									</span>
 								</div>
-							))}
+							</div>
 						</Main>
 					</MessComp>
 
 					<ComPart>
 						<InputEmoji
-							value={com}
-							onChange={setCom}
+							value={message}
+							onChange={setMessage}
 							placeholder='Type a message'
 						/>
 
@@ -137,7 +114,11 @@ const MessageHold = () => {
 	);
 };
 
-export default MessageHold;
+export default GroupPage;
+
+// <div>
+// 	<MessageContainer2>fvgbhnm</MessageContainer2>
+// </div>;
 
 const MessageContainer = styled.div`
 	padding: 20px 30px;

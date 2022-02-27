@@ -10,6 +10,9 @@ import { PrivateRoute } from "./Components/Private/PrivateRoute";
 import { GlobalContext } from "./GlobalState/GlobalContext";
 import PeoplePage from "./Components/PeoplePage/PeoplePage";
 import MessagePage from "./Components/MessagesPage/MessagePage";
+import GroupChat from "./Components/GroupChat/GroupChat";
+import GroupHolder from "./Components/GroupChat/GroupHolder";
+
 function App() {
 	const [themeMode, setThemeMode] = React.useState("light");
 
@@ -63,6 +66,16 @@ function App() {
 							}
 						/>
 						<Route path='/register' element={<RegisterPage />} />
+						<Route path='/group' element={<GroupChat />} />
+						<Route
+							path='/singlegroup/:id'
+							element={
+								<PrivateRoute>
+									<GroupHolder />
+								</PrivateRoute>
+							}
+						/>
+
 						<Route
 							path='/chat/:id'
 							element={

@@ -74,14 +74,12 @@ const UserImage = styled.img`
 
 const Container = styled.div`
 	height: 150px;
-	background-color: background-color: ${(props) => props.theme.back};
-    flex-direction: column;
-    display : flex;
-	z-index:1;
+	background-color: ${(props) => props.theme.back};
+	flex-direction: column;
+	display: flex;
+	/* z-index: 1; */
 
-    align-items: center;
-    position : sticky;
-    top : 0
-    
-
+	align-items: center;
+	position: sticky;
+	top: 0;
 `;

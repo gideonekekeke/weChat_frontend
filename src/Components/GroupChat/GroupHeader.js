@@ -2,40 +2,41 @@ import React from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { MdGroups } from "react-icons/md";
 
-const MessageHeader = ({ id }) => {
+const GroupHeader = ({ id }) => {
 	const [fetchData, setFetchData] = React.useState([]);
-	const [data, setData] = React.useState([]);
-	const readChatId = useSelector((state) => state.persistedReducer.userChat);
+	const readGroupId = useSelector((state) => state.persistedReducer.groupId);
 
 	const getById = async () => {
-		const res = await axios.get(`http://localhost:9090/user/${id}`);
-		setFetchData(res);
-	};
-
-	const getUser = async () => {
-		const res = await axios.get(`http://localhost:9090/user/${readChatId}`);
-
-		setData(res.data.data);
+		const res = await axios.get(`http://localhost:9090/groups/${readGroupId}`);
+		setFetchData(res.data);
 	};
 
 	React.useEffect(() => {
 		getById();
-
-		getUser();
-	}, [readChatId]);
-
+		console.log("helloghh", fetchData);
+	}, [readGroupId]);
 	return (
 		<Container>
 			<Holding>
 				<Wrapper>
 					<MainHold>
-						{" "}
-						{data && <UserImage src={`http://localhost:9090/${data.image}`} />}
+						<div
+							style={{
+								height: "50px",
+								width: "50px",
+								borderRadius: "50%",
+								background: "silver",
+								marginLeft: "20px",
+							}}>
+							{" "}
+							<MdGroups style={{ fontSize: "30px", margin: "10px" }} />
+						</div>
 						<TextHold>
-							<PersonName>{data && data.fullName}</PersonName>
+							<PersonName>{fetchData && fetchData.GroupName}</PersonName>
 							<TimeHold>
-								<MesHold>{data && data.email}</MesHold>
+								<MesHold>{fetchData && fetchData.GroupMemebers}</MesHold>
 							</TimeHold>
 						</TextHold>
 					</MainHold>
@@ -45,7 +46,7 @@ const MessageHeader = ({ id }) => {
 	);
 };
 
-export default MessageHeader;
+export default GroupHeader;
 
 const TextHold = styled.div`
 	margin-left: 10px;
@@ -91,12 +92,14 @@ const UserImage = styled.img`
 	object-fit: cover;
 `;
 
-const Holding = styled.div``;
+const Holding = styled.div`
+	width: 900px;
+`;
 
 const Container = styled.div`
 	height: 70px;
 	background-color: ${(props) => props.theme.back};
-	width: 100%;
+	width: 900px;
 	box-shadow: ${(props) => props.theme.bshad};
 	border-bottom: 1px solid ${(props) => props.theme.boderLine};
 	position: sticky;

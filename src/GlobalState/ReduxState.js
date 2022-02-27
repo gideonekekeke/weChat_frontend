@@ -4,6 +4,8 @@ const initialState = {
 	userID: [],
 	userChat: [],
 	MainIDS: [],
+	groupId: [],
+	groudData: [],
 };
 
 const ReduxState = createSlice({
@@ -19,13 +21,25 @@ const ReduxState = createSlice({
 		postChate: (state, { payload }) => {
 			state.MainIDS = payload;
 		},
+		getGroupID: (state, { payload }) => {
+			state.groupId = payload;
+		},
+		getGroupDatas: (state, { payload }) => {
+			state.groudData = payload;
+		},
 		removingUser: (state, { payload }) => {
 			state.userID = state.userID.filter((item) => item === payload);
 		},
 	},
 });
 
-export const { getUserID, removingUser, getUserChatId, postChate } =
-	ReduxState.actions;
+export const {
+	getUserID,
+	removingUser,
+	getUserChatId,
+	postChate,
+	getGroupID,
+	getGroupDatas,
+} = ReduxState.actions;
 
 export default ReduxState.reducer;

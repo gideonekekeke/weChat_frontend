@@ -4,12 +4,20 @@ import axios from "axios";
 import { GlobalContext } from "../../GlobalState/GlobalContext";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { getUserChatId, postChate } from "../../GlobalState/ReduxState";
+import {
+	getGroupDatas,
+	getGroupID,
+	getUserChatId,
+	postChate,
+} from "../../GlobalState/ReduxState";
+import { MdGroups } from "react-icons/md";
 
 const MainChat = () => {
 	const dispatch = useDispatch();
 	const { current } = useContext(GlobalContext);
 	const [fetchData, setFetchData] = React.useState([]);
+	const [groupData, setGroupData] = React.useState([]);
+	const [user, setUser] = React.useState([]);
 
 	const url = "http://localhost:9090/friends";
 
@@ -18,12 +26,67 @@ const MainChat = () => {
 
 		setFetchData(res.data);
 	};
+	const getGroupData = async () => {
+		const res = await axios.get("http://localhost:9090/groups");
+		setGroupData(res.data);
+		console.log("this is the group data", res.data);
+	};
 
 	React.useEffect(() => {
 		getData();
+		getGroupData();
 	}, []);
 	return (
 		<Container>
+			<ButHold to='/group'>
+				{" "}
+				<span>
+					<MdGroups
+						style={{ color: "white", fontSize: "30px", margin: "10px" }}
+					/>
+				</span>
+				Create Group Chat
+			</ButHold>
+
+			<Wrapper>
+				{groupData.map((props) => (
+					<div>
+						{props.createdBy === current._id ? (
+							<LinkHold
+								onClick={() => {
+									dispatch(getGroupDatas(props.createdBy));
+									dispatch(getGroupID(props._id));
+									console.log(props.GroupMemebers);
+								}}
+								to={`/singlegroup/${props._id}`}>
+								<MainHold>
+									<div
+										style={{
+											height: "50px",
+											width: "50px",
+											borderRadius: "50%",
+											background: "silver",
+											marginLeft: "20px",
+										}}>
+										{" "}
+										<MdGroups style={{ fontSize: "30px", margin: "10px" }} />
+									</div>
+
+									<TextHold>
+										<PersonName>{props.GroupName}</PersonName>
+									</TextHold>
+								</MainHold>
+							</LinkHold>
+						) : (
+							<div>
+								{props.GroupMemebers.find((el) => el.id !== current._id) ? (
+									<div>same group</div>
+								) : null}
+							</div>
+						)}
+					</div>
+				))}
+			</Wrapper>
 			<Wrapper>
 				{fetchData.map((props) => (
 					<div key={props._id}>
@@ -55,6 +118,30 @@ const MainChat = () => {
 };
 
 export default MainChat;
+
+const ButHold = styled(Link)`
+	height: 40px;
+	width: 100%;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	text-decoration: none;
+
+	cursor: pointer;
+
+	:hover {
+		background-color: ${(props) => props.theme.boderLine};
+		color: ${(props) => props.theme.col};
+		cursor: pointer;
+
+		span {
+			color: ${(props) => props.theme.col};
+			cursor: pointer;
+		}
+	}
+`;
 
 const LinkHold = styled(Link)`
 	text-decoration: none;
@@ -105,4 +192,8 @@ const UserImage = styled.img`
 	object-fit: cover;
 `;
 
-const Container = styled.div``;
+const Container = styled.div`
+	height: 700px;
+	/* background: red; */
+	overflow-y: scroll;
+`;
